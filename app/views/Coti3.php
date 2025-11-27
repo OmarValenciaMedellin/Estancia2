@@ -3,46 +3,69 @@
 // $cot = $_SESSION['cotizacion'];
 // Contiene subtotal y (si ya se calculó antes) descuento, mano_obra, impuestos, total.
 
+// Inicia sesión si no está iniciada
 if (session_status() === PHP_SESSION_NONE) {
-  session_start();
+    session_start();
 }
 
+// Toma la cotización actual de la sesión
 $cot = $_SESSION['cotizacion'] ?? [];
 
+// Subtotal base
 $subtotal = isset($cot['subtotal']) ? (float)$cot['subtotal'] : 0;
 
+// Valores guardados o por default
 $descuento_porc = isset($cot['descuento_porc']) ? (float)$cot['descuento_porc'] : 0;
 $impuestos_porc = isset($cot['impuestos_porc']) ? (float)$cot['impuestos_porc'] : 16;
+
+// Mano de obra (valor anterior o vacío)
 $mano_obra_val = isset($cot['mano_obra']) ? (float)$cot['mano_obra'] : '';
+
 // ✅ Para cálculos (SIEMPRE número)
-$mano_obra_val = isset($cot['mano_obra']) && is_numeric($cot['mano_obra'])
+$mano_obra_val = (isset($cot['mano_obra']) && is_numeric($cot['mano_obra']))
     ? (float)$cot['mano_obra']
     : 0;
-$notas          = isset($cot['notas']) ? $cot['notas'] : '';
 
-// Recalculo simple para mostrar (solo vista):
+// Notas guardadas
+$notas = isset($cot['notas']) ? $cot['notas'] : '';
+
+// Recalculo simple para mostrar en pantalla (solo vista)
 $monto_descuento = ($descuento_porc / 100.0) * $subtotal;
 $base            = $subtotal - $monto_descuento + $mano_obra_val;
 $monto_impuestos = ($impuestos_porc / 100.0) * $base;
 $total_calc      = $base + $monto_impuestos;
+
+// ⚠️ OJO: abajo usas $mano_obra_val_display pero no está definida.
+// Si te marca error, define una variable para mostrar, ej:
+// $mano_obra_val_display = $cot['mano_obra'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="es">
   <head>
+    <!-- Meta básicos -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Coti Express - Crear Nueva Cotización</title>
 
+    <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
+    <!-- Fuentes e íconos -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+      rel="stylesheet"
+    />
 
+    <!-- Config Tailwind -->
     <script>
       tailwind.config = {
-        darkMode: "class",
+        darkMode: "class", // Modo oscuro por clase
         theme: {
           extend: {
             colors: {
@@ -50,7 +73,9 @@ $total_calc      = $base + $monto_impuestos;
               "background-light": "#f6f8f8",
               "background-dark": "#101f22",
             },
-            fontFamily: { display: ["Work Sans", "Noto Sans", "sans-serif"] },
+            fontFamily: {
+              display: ["Work Sans", "Noto Sans", "sans-serif"],
+            },
             borderRadius: {
               DEFAULT: "0.25rem",
               lg: "0.5rem",
@@ -62,6 +87,7 @@ $total_calc      = $base + $monto_impuestos;
       };
     </script>
 
+    <!-- Ajuste visual de íconos -->
     <style>
       .material-symbols-outlined {
         font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
@@ -70,46 +96,84 @@ $total_calc      = $base + $monto_impuestos;
   </head>
 
   <body class="font-display">
-    <div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden">
+    <!-- Contenedor general -->
+    <div
+      class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden"
+    >
       <div class="layout-container flex h-full grow flex-col">
-
+        
         <!-- HEADER -->
-        <header class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark px-6 sm:px-10 py-3">
+        <header
+          class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark px-6 sm:px-10 py-3"
+        >
+          <!-- Logo + título -->
           <div class="flex items-center gap-4 text-slate-800 dark:text-white">
             <div class="size-6 text-primary">
-              <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                <path d="M6 6H42L36 24L42 42H6L12 24L6 6Z" fill="currentColor"></path>
+              <svg
+                fill="none"
+                viewBox="0 0 48 48"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M6 6H42L36 24L42 42H6L12 24L6 6Z"
+                  fill="currentColor"
+                ></path>
               </svg>
             </div>
-            <h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">Coti Express</h2>
+            <h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">
+              Coti Express
+            </h2>
           </div>
 
+          <!-- Botones de arriba (solo visual) -->
           <div class="flex flex-1 justify-end gap-4 sm:gap-6">
             <div class="flex gap-2">
-              <button class="flex items-center justify-center rounded-lg h-10 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white gap-2 text-sm font-bold px-2.5" type="button">
-                <span class="material-symbols-outlined text-slate-600 dark:text-slate-300">notifications</span>
+              <button
+                class="flex items-center justify-center rounded-lg h-10 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white gap-2 text-sm font-bold px-2.5"
+                type="button"
+              >
+                <span
+                  class="material-symbols-outlined text-slate-600 dark:text-slate-300"
+                >
+                  notifications
+                </span>
               </button>
-              <button class="flex items-center justify-center rounded-lg h-10 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white gap-2 text-sm font-bold px-2.5" type="button">
-                <span class="material-symbols-outlined text-slate-600 dark:text-slate-300">help</span>
+
+              <button
+                class="flex items-center justify-center rounded-lg h-10 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white gap-2 text-sm font-bold px-2.5"
+                type="button"
+              >
+                <span
+                  class="material-symbols-outlined text-slate-600 dark:text-slate-300"
+                >
+                  help
+                </span>
               </button>
             </div>
           </div>
         </header>
 
-        <!-- BODY -->
-        <main class="px-4 sm:px-6 lg:px-8 flex flex-1 justify-center py-5">
+        <!-- MAIN -->
+        <main
+          class="px-4 sm:px-6 lg:px-8 flex flex-1 justify-center py-5"
+        >
           <div class="flex flex-col w-full max-w-4xl flex-1 gap-6">
 
+            <!-- Título principal -->
             <div>
-              <p class="text-slate-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">
+              <p
+                class="text-slate-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]"
+              >
                 Crear Nueva Cotización
               </p>
             </div>
 
-            <!-- BARRA DE PROGRESO -->
+            <!-- Barra de progreso -->
             <div class="flex flex-col gap-3 pt-4">
               <div class="flex flex-col sm:flex-row gap-6 justify-between">
-                <p class="text-slate-800 dark:text-slate-200 text-base font-medium leading-normal">
+                <p
+                  class="text-slate-800 dark:text-slate-200 text-base font-medium leading-normal"
+                >
                   Paso 3 de 4: Detalles Adicionales
                 </p>
               </div>
@@ -119,9 +183,11 @@ $total_calc      = $base + $monto_impuestos;
               </div>
             </div>
 
-            <div class="bg-white dark:bg-slate-900/70 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 sm:p-8 flex flex-col gap-6">
-
-              <!-- ✅ ERRORES BACKEND -->
+            <!-- Card principal -->
+            <div
+              class="bg-white dark:bg-slate-900/70 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 sm:p-8 flex flex-col gap-6"
+            >
+              <!-- Errores del backend -->
               <?php if (!empty($_SESSION['cotizacion_error'])): ?>
                 <div class="bg-red-100 text-red-800 p-3 rounded-lg">
                   <?php echo $_SESSION['cotizacion_error']; ?>
@@ -130,19 +196,27 @@ $total_calc      = $base + $monto_impuestos;
               <?php endif; ?>
 
               <!-- FORM -->
-              <form method="post" action="index.php?action=cotizacion&step=3" class="flex flex-col gap-6">
-
-                <h2 class="text-slate-800 dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] pb-2 border-b border-slate-200 dark:border-slate-800">
+              <form
+                method="post"
+                action="index.php?action=cotizacion&step=3"
+                class="flex flex-col gap-6"
+              >
+                <h2
+                  class="text-slate-800 dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] pb-2 border-b border-slate-200 dark:border-slate-800"
+                >
                   Detalles Adicionales
                 </h2>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
+                  
+                  <!-- Inputs de números -->
                   <div class="flex flex-col gap-6">
 
-                    <!-- ✅ DESCUENTO -->
+                    <!-- Descuento -->
                     <label class="flex flex-col min-w-40 w-full">
-                      <span class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1.5">
+                      <span
+                        class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1.5"
+                      >
                         Descuento (%) *
                       </span>
                       <input
@@ -158,9 +232,11 @@ $total_calc      = $base + $monto_impuestos;
                       />
                     </label>
 
-                    <!-- ✅ IMPUESTOS -->
+                    <!-- Impuestos -->
                     <label class="flex flex-col min-w-40 w-full">
-                      <span class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1.5">
+                      <span
+                        class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1.5"
+                      >
                         Impuestos (%) *
                       </span>
                       <input
@@ -176,13 +252,21 @@ $total_calc      = $base + $monto_impuestos;
                       />
                     </label>
 
+                    <!-- Mano de obra -->
                     <label class="flex flex-col min-w-40 w-full">
-                      <span class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1.5">
+                      <span
+                        class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1.5"
+                      >
                         Costos de Mano de Obra
                       </span>
 
                       <div class="relative w-full">
-                        <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-500 dark:text-slate-400">$</span>
+                        <!-- Signo $ fijo -->
+                        <span
+                          class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-500 dark:text-slate-400"
+                        >
+                          $
+                        </span>
 
                         <input
                           class="form-input w-full rounded-lg text-slate-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 h-12 placeholder:text-slate-500 dark:placeholder:text-slate-400 px-4 pl-8 text-base font-normal leading-normal"
@@ -198,12 +282,15 @@ $total_calc      = $base + $monto_impuestos;
                     </label>
                   </div>
 
-                  <!-- ✅ NOTAS -->
+                  <!-- Notas -->
                   <div class="flex flex-col gap-6">
                     <label class="flex flex-col min-w-40 w-full h-full">
-                      <span class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1.5">
+                      <span
+                        class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1.5"
+                      >
                         Notas o Comentarios
                       </span>
+
                       <textarea
                         class="form-textarea h-full w-full flex-1 rounded-lg text-slate-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 placeholder:text-slate-500 dark:placeholder:text-slate-400 px-4 py-3 text-base"
                         name="notas"
@@ -211,47 +298,64 @@ $total_calc      = $base + $monto_impuestos;
                       ><?php echo htmlspecialchars($notas); ?></textarea>
                     </label>
                   </div>
-
                 </div>
 
-                <!-- RESUMEN -->
-                <div class="flex justify-end pt-4 border-t border-slate-200 dark:border-slate-800">
+                <!-- Resumen de cálculo -->
+                <div
+                  class="flex justify-end pt-4 border-t border-slate-200 dark:border-slate-800"
+                >
                   <div class="flex flex-col items-end gap-2 text-right">
 
                     <div class="flex justify-between items-center w-64 text-sm">
                       <p class="text-slate-500 dark:text-slate-400">Subtotal:</p>
-                      <p class="text-slate-700 dark:text-slate-300">$<?php echo number_format($subtotal, 2); ?></p>
+                      <p class="text-slate-700 dark:text-slate-300">
+                        $<?php echo number_format($subtotal, 2); ?>
+                      </p>
                     </div>
 
                     <div class="flex justify-between items-center w-64 text-sm">
                       <p class="text-slate-500 dark:text-slate-400">
                         Descuento (<?php echo number_format($descuento_porc, 2); ?>%):
                       </p>
-                      <p class="text-red-500 dark:text-red-400">-$<?php echo number_format($monto_descuento, 2); ?></p>
+                      <p class="text-red-500 dark:text-red-400">
+                        -$<?php echo number_format($monto_descuento, 2); ?>
+                      </p>
                     </div>
 
                     <div class="flex justify-between items-center w-64 text-sm">
                       <p class="text-slate-500 dark:text-slate-400">Mano de Obra:</p>
-                      <p class="text-slate-700 dark:text-slate-300">$<?php echo number_format($mano_obra_val, 2); ?></p>
+                      <p class="text-slate-700 dark:text-slate-300">
+                        $<?php echo number_format($mano_obra_val, 2); ?>
+                      </p>
                     </div>
 
                     <div class="flex justify-between items-center w-64 text-sm">
                       <p class="text-slate-500 dark:text-slate-400">
                         Impuestos (<?php echo number_format($impuestos_porc, 2); ?>%):
                       </p>
-                      <p class="text-slate-700 dark:text-slate-300">$<?php echo number_format($monto_impuestos, 2); ?></p>
+                      <p class="text-slate-700 dark:text-slate-300">
+                        $<?php echo number_format($monto_impuestos, 2); ?>
+                      </p>
                     </div>
 
-                    <div class="flex justify-between items-center w-64 pt-2 mt-2 border-t border-slate-200 dark:border-slate-700">
-                      <p class="text-lg font-bold text-slate-800 dark:text-white">TOTAL:</p>
-                      <p class="text-2xl font-bold text-slate-900 dark:text-white">$<?php echo number_format($total_calc, 2); ?></p>
+                    <div
+                      class="flex justify-between items-center w-64 pt-2 mt-2 border-t border-slate-200 dark:border-slate-700"
+                    >
+                      <p class="text-lg font-bold text-slate-800 dark:text-white">
+                        TOTAL:
+                      </p>
+                      <p class="text-2xl font-bold text-slate-900 dark:text-white">
+                        $<?php echo number_format($total_calc, 2); ?>
+                      </p>
                     </div>
 
                   </div>
                 </div>
 
-                <!-- BOTONES -->
-                <div class="flex justify-between gap-4 pt-6 border-t border-slate-200 dark:border-slate-800">
+                <!-- Botones -->
+                <div
+                  class="flex justify-between gap-4 pt-6 border-t border-slate-200 dark:border-slate-800"
+                >
                   <a
                     href="index.php?action=cotizacion&step=2"
                     class="flex items-center justify-center rounded-lg h-12 border border-slate-300 dark:border-slate-700 bg-transparent text-slate-600 dark:text-slate-300 gap-2 text-sm font-bold px-6 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
