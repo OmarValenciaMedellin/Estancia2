@@ -909,4 +909,6 @@ class UserController
 
         echo "<h2>$mensaje</h2>";
     }
+
+   
 }

@@ -84,7 +84,7 @@
 
               <!-- Navegación -->
               <div class="hidden md:flex flex-1 justify-end gap-8">
-                <div class="flex items-center gap-9">
+                <div class="text-blue-500  flex items-center gap-9">
                   <?php
                     session_start();
                     if ($_SESSION['Cargo'] === 'administrador'):
@@ -98,32 +98,26 @@
                   <?php endif; ?>
 
                   <a
-                    class="text-white/80 hover:text-white text-sm font-medium leading-normal <?php echo $action == '' ? 'text-blue-500 font-bold' : ''; ?>"
+                    class="text-blue-500 hover:text-white text-sm font-medium leading-normal <?php echo $action == '' ? 'text-blue-500 font-bold' : ''; ?>"
                     href="index.php?action=cotizaciones"
                   >
                     Cotizaciones
                   </a>
 
                   <a
-                    class="text-white/80 hover:text-white text-sm font-medium leading-normal <?php echo $action == 'consultMaterial' ? 'text-blue-500 font-bold' : ''; ?>"
+                    class="text-blue-500 hover:text-white text-sm font-medium leading-normal <?php echo $action == 'consultMaterial' ? 'text-blue-500 font-bold' : ''; ?>"
                     href="index.php?action=consultMaterial"
                   >
                     Materiales
                   </a>
 
                   <a
-                    class="text-white/80 hover:text-white text-sm font-medium leading-normal <?php echo $action == 'consultCliente' ? 'text-blue-500 font-bold' : ''; ?>"
+                    class="text-blue-500 hover:text-white text-sm font-medium leading-normal <?php echo $action == 'consultCliente' ? 'text-blue-500 font-bold' : ''; ?>"
                     href="index.php?action=consultCliente"
                   >
                     Clientes
                   </a>
 
-                  <a
-                    class="text-white/80 hover:text-white text-sm font-medium leading-normal <?php echo $action == 'inventario' ? 'text-blue-500 font-bold' : ''; ?>"
-                    href="index.php?action=inventario"
-                  >
-                    Inventario
-                  </a>
                 </div>
               </div>
             </header>

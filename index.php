@@ -2,6 +2,7 @@
 
 // Llamar al controlador y conexión
 include_once "app/controllers/UserControllers.php";
+include_once "app/controllers/reportController.php";
 include_once "config/db_connection.php";
 
 $controller = new UserController($connection);
@@ -93,7 +94,10 @@ if (isset($_GET['action'])) {
         case 'guardarCotizacion':
             $controller->guardarCotizacion();
             break;
-
+        case "pdfClientesMasCotizaciones":
+            $controller = new reportController($connection);
+            $controller->pdfClientesMasCotizaciones();
+            break;
         case 'eliminarCotizacion':
             $controller->eliminarCotizacion();
             break;

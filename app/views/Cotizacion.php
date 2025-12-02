@@ -455,7 +455,34 @@ if (isset($cotizaciones) && $cotizaciones && $cotizaciones->num_rows > 0) {
                                 Generar PDF General
                             </button>
                         </form>
+                        <!-- Form PDF clientes con más cotizaciones (filtro por N) -->
+                            <form
+                                method="get"
+                                action="index.php"
+                                class="flex flex-wrap gap-3 items-end bg-white/70 dark:bg-gray-900/40 p-4 rounded-lg border border-gray-200 dark:border-gray-700"
+                            >
+                                <input type="hidden" name="action" value="pdfClientesMasCotizaciones">
 
+                                <label class="text-sm flex flex-col">
+                                    Mínimo de cotizaciones
+                                    <input
+                                        type="number"
+                                        name="min"
+                                        min="1"
+                                        required
+                                        placeholder="Ej. 10"
+                                        class="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 p-2 w-40"
+                                    >
+                                </label>
+
+                                <button
+                                    type="submit"
+                                    class="flex items-center justify-center rounded-lg h-10 md:h-12 bg-[#005f86] text-white gap-2 text-sm font-bold px-6 hover:bg-[#004966] transition-colors"
+                                >
+                                    <span class="material-symbols-outlined">picture_as_pdf</span>
+                                    PDF Clientes Top
+                                </button>
+                            </form>
                         <!-- Botón PDF de materiales más usados -->
                         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                             <div class="flex flex-wrap gap-3 justify-start md:justify-end w-full">

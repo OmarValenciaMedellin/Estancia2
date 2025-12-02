@@ -111,7 +111,7 @@
                   <p
                     class="text-text-main text-4xl font-black font-title tracking-tighter"
                   >
-                    Crear cuenta Vendedor
+                    Crear cuenta Vendedor o Administrador
                   </p>
                   <p
                     class="text-text-secondary text-base font-normal leading-normal font-body"
@@ -275,8 +275,7 @@
                       name="registro"
                       class="flex w-full min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-4 bg-gradient-to-r from-button-start to-button-end text-white text-base font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity shadow-lg"
                     >
-                      <span class="truncate font-body"
-                        >Registrar vendedor</span
+                      <span class="truncate font-body"> Registrar</span
                       >
                     </button>
 

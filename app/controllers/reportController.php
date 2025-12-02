@@ -254,4 +254,68 @@ class reportController
         $pdf->Output("I", "Reporte_Materiales.pdf");
         exit;
     }
+
+     // ====================================
+    // PDF CLIENTES CON MÁS COTIZACIONES
+    // filtro: mínimo de cotizaciones (N)
+    // ====================================
+    public function pdfClientesMasCotizaciones(){
+
+        $min = $_GET['min'] ?? 1; 
+        $min = (int)$min;
+
+        $clientes = $this->model->clientesConMasCotizaciones($min);
+
+        $pdf = new FPDF();
+        $pdf->AddPage();
+
+        // Encabezado
+        $pdf->SetFont("Arial","B",14);
+        $pdf->Cell(0,8,"Coti Express",0,1,"C");
+        $pdf->SetFont("Arial","B",12);
+        $pdf->Cell(0,8,"Reporte: Clientes con mas cotizaciones",0,1,"C");
+        $pdf->Ln(2);
+
+        $pdf->SetFont("Arial","",10);
+        $pdf->Cell(0,6,"Filtro: clientes con $min o mas cotizaciones",0,1);
+        $pdf->Cell(0,6,"Fecha de generacion: ".date("Y-m-d H:i"),0,1);
+        $pdf->Ln(4);
+
+        // Tabla
+        $pdf->SetFont("Arial","B",9);
+        $pdf->Cell(10,8,"ID",1,0,"C");
+        $pdf->Cell(55,8,"Cliente",1,0,"C");
+        $pdf->Cell(35,8,"Telefono",1,0,"C");
+        $pdf->Cell(55,8,"Correo",1,0,"C");
+        $pdf->Cell(20,8,"# Cots",1,0,"C");
+        $pdf->Cell(20,8,"Total $",1,1,"C");
+
+        $pdf->SetFont("Arial","",9);
+
+        $contadorClientes = 0;
+
+        while($row = $clientes->fetch_assoc()){
+            $contadorClientes++;
+
+            $nombre = $row['Nombre']." ".$row['Apellido'];
+
+            $pdf->Cell(10,7,$row['id_Cliente'],1,0,"C");
+            $pdf->Cell(55,7,utf8_decode($nombre),1,0);
+            $pdf->Cell(35,7,$row['Telefono'],1,0,"C");
+            $pdf->Cell(55,7,utf8_decode($row['Correo']),1,0);
+            $pdf->Cell(20,7,$row['total_cotizaciones'],1,0,"C");
+            $pdf->Cell(20,7,"$".number_format($row['total_cotizado'],2),1,1,"R");
+        }
+
+        // resumen
+        $pdf->Ln(5);
+        $pdf->SetFont("Arial","B",11);
+        $pdf->Cell(0,7,"Resumen",0,1);
+
+        $pdf->SetFont("Arial","",10);
+        $pdf->Cell(0,6,"Clientes encontrados: $contadorClientes",0,1);
+
+        $pdf->Output("I","Reporte_Clientes_Mas_Cotizaciones.pdf");
+        exit;
+    }
 }

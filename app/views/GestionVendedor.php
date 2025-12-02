@@ -118,7 +118,7 @@
             </a>
 
             <a
-              href="#"
+              href="index.php?action=cotizaciones"
               class="text-sm font-medium leading-normal text-text-light-primary dark:text-text-dark-primary"
             >
               Cotizaciones

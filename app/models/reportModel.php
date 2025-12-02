@@ -124,6 +124,33 @@ class reportModel
 
         return $data; // Retorna array listo para usar
     }
+
+    // 4. CLIENTES CON MÁS COTIZACIONES (FILTRADO POR N)
+    // ====================================
+    public function clientesConMasCotizaciones($minCotizaciones){
+        $minCotizaciones = (int)$minCotizaciones;
+
+        $sql = "
+            SELECT
+                cl.id_Cliente,
+                cl.Nombre,
+                cl.Apellido,
+                cl.Telefono,
+                cl.Correo,
+                COUNT(c.id_cotizacion) AS total_cotizaciones,
+                SUM(c.Total) AS total_cotizado
+            FROM registro_cliente cl
+            INNER JOIN cotizacion c ON c.id_Cliente = cl.id_Cliente
+            GROUP BY cl.id_Cliente, cl.Nombre, cl.Apellido, cl.Telefono, cl.Correo
+            HAVING COUNT(c.id_cotizacion) >= ?
+            ORDER BY total_cotizaciones DESC
+        ";
+
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bind_param("i", $minCotizaciones);
+        $stmt->execute();
+        return $stmt->get_result();
+    }
 }
 
 ?>
