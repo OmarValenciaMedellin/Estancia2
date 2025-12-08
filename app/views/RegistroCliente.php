@@ -136,6 +136,21 @@
               </div>
 
               <div class="mt-8">
+
+                <!-- MENSAJE DE ÉXITO / ERROR -->
+                <?php if (isset($_GET['success'])): ?>
+                  <div class="mx-4 mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-800 font-body">
+                     Registro exitoso. El cliente fue guardado correctamente.
+                  </div>
+                <?php endif; ?>
+
+                <?php if (isset($_GET['error'])): ?>
+                  <div class="mx-4 mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-800 font-body">
+                    Ocurrió un error al registrar. Intenta de nuevo.
+                  </div>
+                <?php endif; ?>
+                <!-- FIN MENSAJE -->
+
                 <form
                   class="space-y-6 p-4"
                   action="index.php?action=insertCliente"
@@ -251,6 +266,7 @@
 
                   <!-- Botones -->
                   <center>
+                    <!-- Botón Registrar -->
                     <button
                       type="submit"
                       class="flex w-full min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-4 bg-gradient-to-r from-button-start to-button-end text-white text-base font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity shadow-lg"
@@ -260,17 +276,13 @@
 
                     <br /><br />
 
-                    <button
-                      type="submit"
+                    <!-- Botón Regresar (NO submit) -->
+                    <a
+                      href="index.php?action=catalogo"
                       class="flex w-full min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-4 bg-gradient-to-r from-button-start to-button-end text-white text-base font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity shadow-lg"
                     >
-                      <a
-                        href="index.php?action=catalogo"
-                        class="flex w-full min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-4 bg-gradient-to-r from-button-start to-button-end text-white text-base font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity shadow-lg"
-                      >
-                        <span class="truncate font-body">Regresar</span>
-                      </a>
-                    </button>
+                      <span class="truncate font-body">Regresar</span>
+                    </a>
                   </center>
                 </form>
               </div>

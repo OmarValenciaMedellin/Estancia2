@@ -35,12 +35,35 @@ class UserModel
 
     public function insertarCliente($nombre, $apellido, $telefono, $correo)
     {
-        // Inserta cliente nuevo
-        $sql_statement = "INSERT INTO registro_cliente (nombre, apellido, telefono, correo) VALUES (?, ?, ?, ?)";
-        $statement = $this->connection->prepare($sql_statement);
-        $statement->bind_param("ssss", $nombre, $apellido, $telefono, $correo);
+        try {
+            // OJO: usamos la MISMA tabla del resto del sistema
+            $sql_statement = "INSERT INTO registro_cliente (nombre, apellido, telefono, correo)
+                            VALUES (?, ?, ?, ?)";
 
-        return $statement->execute();
+            $statement = $this->connection->prepare($sql_statement);
+
+            if (!$statement) {
+                // Para ver error exacto de SQL si algo falla
+                throw new Exception("Prepare failed: " . $this->connection->error);
+            }
+
+        
+            $statement->bind_param("ssss", $nombre, $apellido, $telefono, $correo);
+
+            $ok = $statement->execute();
+
+            if (!$ok) {
+                throw new Exception("Execute failed: " . $statement->error);
+            }
+
+            $statement->close();
+            return true;
+
+        } catch (Exception $e) {
+            // Si quieres ver el error real mientras pruebas:
+            // die($e->getMessage());
+            return false;
+        }
     }
 
     public function insertarCliente2($nombre, $apellido, $telefono, $correo)

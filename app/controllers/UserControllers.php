@@ -133,7 +133,6 @@ class UserController
 
     public function insertarCliente()
     {
-        // Si el formulario de cliente fue enviado
         if (isset($_POST['registroCliente'])) {
 
             // Limpia datos
@@ -142,12 +141,18 @@ class UserController
             $telefono = trim($_POST['telefono']);
             $correo   = trim($_POST['correo']);
 
-            // Inserta cliente
-            $this->model->insertarCliente($nombre, $apellido, $telefono, $correo);
+            // Inserta cliente (ideal: que el modelo retorne true/false)
+            $resultado = $this->model->insertarCliente($nombre, $apellido, $telefono, $correo);
 
-            // Redirige
-            header("Location: index.php?action=insertCliente");
-            exit;
+            if ($resultado) {
+                // Redirige a la vista con éxito
+                header("Location: index.php?action=registroCliente&success=1");
+                exit;
+            } else {
+                // Redirige con error
+                header("Location: index.php?action=registroCliente&error=1");
+                exit;
+            }
         }
 
         // Muestra vista
